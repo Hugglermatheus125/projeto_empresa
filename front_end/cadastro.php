@@ -25,7 +25,7 @@ include '../includes/header.php';
                         </div>
 
                         <div class="mb-3">
-                            <label for="senha" class="form-label">Senha</label>
+                            <label for="password" class="form-label">Senha</label>
                             <input
                                 type="password"
                                 name="password"
@@ -66,23 +66,6 @@ include '../includes/header.php';
         </div>
     </div>
 </main>
-
-<script>
-    function verificacaoFormulario() {
-        let nome = document.getElementById('nome').value;
-        let email = document.getElementById('email').value;
-        let password = document.getElementById('password').value;
-        let telefone = document.getElementById('telefone').value;
-
-        if (nome === '' || email === '' || password === '' || telefone === '') {
-            alert('Por favor, preencha todos os campos obrigatórios.');
-            return false; // ta impedino o envio do formulario
-        }
-
-
-        return true; // deixa enviar pro php
-    }
-</script>
 
 <?php
 include '../includes/footer.php';
