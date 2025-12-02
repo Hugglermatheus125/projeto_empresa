@@ -15,6 +15,12 @@ main{
     background-color: #f3f3f3;
 }
 
+body {
+    background-color: rgb(51, 51, 51);
+}
+
+/* login */
+
 .login-caixa {
     padding: 40px 0;
 }
@@ -43,4 +49,164 @@ main{
 .botao-login {
     background-color: #ADAFB1;
     color: #FFFFFF;
+}
+
+/* header */
+
+.navbar{
+    padding: 5px 0px;
+}
+
+.navbar-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#FFFFFF;
+    font-size: 14px;
+    margin:0;
+    position:relative;
+}
+
+.navbar-brand::before{
+    content: "";
+    display:inline-block;
+    width:50px;
+    height:50px;
+    background-image: url("../front_end/assets/"); /* add logo */
+    background-size: cover;
+    background-position: center;
+}
+
+.navbar-nav{
+    margin-left:auto;
+    align-items:center;
+    display:flex;
+}
+
+.nav-item .nav-link{
+    color : #FFFFFF;
+    padding:8px 14px;
+    font-size:14px;
+    position:relative;
+    transition: color 0.15s ease;
+}
+
+.nav-item .nav-link.active::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:5px;
+    width:60%;
+    height:2px;
+    background:#FFFFFF;
+    border-radius:2px;
+}
+
+.navbar-nav .nav-item{
+    margin-left:8px;
+}
+
+.nav-link.active {
+    color: #FFFFFF !important;
+    text-decoration: none;
+}
+
+.nav-link {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.nav-link:visited {
+    color: #FFFFFF;
+}
+
+.nav-link:active {
+    color: #FFFFFF;
+}
+
+/* sobre nós */
+
+.container {
+    max-width: 850px;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+h1 {
+    color: white;
+    font-size: 28px;
+    margin-bottom: 30px;
+}
+
+p {
+    color: white;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.contato {
+    margin-top: 40px;
+    font-size: 16px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contato span {
+    margin-left: 8px;
+}
+
+/* inicio */
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 50px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+}
+
+.text-box {
+    max-width: 500px;
+}
+
+.text-box h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.text-box p {
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 12px 35px;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+.image-box img {
+    max-width: 460px;
+    border-radius: 10px;
 }
