@@ -44,3 +44,12 @@ main{
     background-color: #ADAFB1;
     color: #FFFFFF;
 }
+
+.erro-caixa {
+    background-color: #ffdfdf;
+    border: 1px solid #ff6b6b;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 6px;
+    color: #b30000;
+}

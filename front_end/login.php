@@ -10,9 +10,9 @@ include '../includes/header.php';
 
                 <section class="login-card">
                     <h2 class="login-titulo">Entrar</h2>
-                    <h3 class="login-subtitulo"><i>Digite seus dados de acesso nos campos abaixo:</i></h3>
+                    <h3 class="login-subtitulo"><i>Digite seus dados de acesso:</i></h3>
 
-                    <form action="../back_end/login.php" method="POST" class="login-form" onsubmit="verificacaoFormulario()">
+                    <form action="login.php" method="POST" class="login-form" onsubmit="return verificacaoFormulario(event)">
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -25,32 +25,11 @@ include '../includes/header.php';
                         </div>
 
                         <div class="mb-3">
-                            <label for="senha" class="form-label">Senha</label>
+                            <label for="password" class="form-label">Senha</label>
                             <input
                                 type="password"
                                 name="password"
                                 id="password"
-                                class="form-control"
-                                required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="telefone" class="form-label">Telefone</label>
-                            <input
-                                type="tel"
-                                name="telefone"
-                                id="telefone"
-                                class="form-control"
-                                placeholder="(00) 00000-0000"
-                                required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="data_nasc" class="form-label">Data de Nascimento</label>
-                            <input
-                                type="date"
-                                name="data_nasc"
-                                id="data_nasc"
                                 class="form-control"
                                 required>
                         </div>
@@ -68,22 +47,86 @@ include '../includes/header.php';
 </main>
 
 <script>
-    function verificacaoFormulario() {
-        let nome = document.getElementById('nome').value;
-        let email = document.getElementById('email').value;
-        let password = document.getElementById('password').value;
-        let telefone = document.getElementById('telefone').value;
+    function verificacaoFormulario(event) {
+        if (event) event.preventDefault();
 
-        if (nome === '' || email === '' || password === '' || telefone === '') {
-            alert('Por favor, preencha todos os campos obrigatórios.');
-            return false; // ta impedino o envio do formulario
+        let email = document.getElementById("email").value.trim();
+        let senha = document.getElementById("password").value.trim();
+        let erros = [];
+
+        if (!email || !senha) {
+            erros.push("Preencha todos os campos obrigatórios.");
         }
 
+        const oldBox = document.querySelector(".caixa-erro");
+        if (oldBox) oldBox.remove();
 
-        return true; // deixa enviar pro php
+        if (erros.length > 0) {
+            const caixa = document.createElement("div");
+            caixa.classList.add("caixa-erro");
+            caixa.innerHTML = erros.map(e => `<p>${e}</p>`).join("");
+
+            const form = document.querySelector(".login-form");
+            form.insertAdjacentElement("afterend", caixa);
+
+            return false;
+        }
+
+        event.target.submit();
+        return true;
     }
 </script>
 
 <?php
 include '../includes/footer.php';
+
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $email = trim($_POST["email"]);
+    $senha = trim($_POST["password"]);
+
+    $sql = "SELECT IdUsuario, Nome, Email, Senha FROM Usuarios WHERE Email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows === 0) {
+        echo "<div class='caixa-erro'><p>Email não encontrado.</p></div>";
+        $stmt->close();
+        exit;
+    }
+
+    $usuario = $resultado->fetch_assoc();
+    $hash = $usuario["Senha"];
+
+    if (!password_verify($senha, $hash)) {
+        echo "<div class='caixa-erro'><p>Senha incorreta.</p></div>";
+        $stmt->close();
+        exit;
+    }
+
+    session_start();
+    $_SESSION["usuario_id"] = $usuario["IdUsuario"];
+    $_SESSION["usuario_nome"] = $usuario["Nome"];
+    $_SESSION["usuario_email"] = $usuario["Email"];
+
+    echo "<h3>Login realizado com sucesso!</h3>";
+    echo "
+<div class='caixa-erro'>
+    <p>Login realizado com sucesso! Redirecionando...</p>
+</div>
+
+<script>
+    setTimeout(function() {
+        window.location.href = '../index.html';
+    }, 2000); // 2 segundos
+</script>
+";
+    exit;
+
+    $stmt->close();
+    $conn->close();
+}
 ?>

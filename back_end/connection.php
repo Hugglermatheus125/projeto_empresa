@@ -6,11 +6,11 @@
 	$database = "Blog"; // nome do banco de dados
 
 	// Cria a conexão
-	$connection = new mysqli($host, $usuario, $senha, $database);
+	$conn = new mysqli($host, $usuario, $senha, $database);
 	
 	// Checa se a conexão foi realizada com sucesso
-	if ($connection->connect_error) {
-	    die("Falha de conexão: " . $connection->connect_error);
+	if ($conn->connect_error) {
+	    die("Falha de conexão: " . $conn->connect_error);
 	}
 
 ?>

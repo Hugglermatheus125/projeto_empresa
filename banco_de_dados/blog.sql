@@ -8,6 +8,7 @@ CREATE TABLE Usuarios (
     Nome VARCHAR(40) NOT NULL,
     Email VARCHAR(60) NOT NULL UNIQUE,
     Senha VARCHAR(255) NOT NULL,
+    Telefone VARCHAR(20) NOT NULL,
     DataNasc DATE NOT NULL,
     StatusFuncionario BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (IdUsuario)
@@ -26,7 +27,7 @@ CREATE TABLE Funcionarios (
 );
 
 -- POSTAGENS --
-CREATE TABLE Postagem (
+CREATE TABLE Postagens (
     IdPostagem INT NOT NULL AUTO_INCREMENT,
     IdUsuario INT NOT NULL,
 
