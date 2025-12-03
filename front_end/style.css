@@ -227,3 +227,41 @@ p {
     border-radius: 6px;
     color: #b30000;
 }
+
+/* AI LUCIANO AQUI E PRA VOCE ESTILIZAR 
+AS PARADAS DAS POSTAGENS BLZZZZZZZZZZZ */
+
+.post-card {
+    border: 1px solid #DDD;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background: white;
+}
+
+.autor {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+}
+
+.titulo {
+    font-size: 20px;
+    margin-top: 5px;
+    color: #222;
+}
+
+.conteudo {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.anexo {
+    color: blue;
+    text-decoration: underline;
+}
+
+.data {
+    color: #777;
+    font-size: 12px;
+}

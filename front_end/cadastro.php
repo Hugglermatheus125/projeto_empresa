@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../back_end/connection.php';
 include '../includes/header.php';
 ?>
@@ -13,7 +14,8 @@ include '../includes/header.php';
                     <h3 class="login-subtitulo"><i>Preencha seus dados abaixo:</i></h3>
 
                     <!-- FORM CADASTRO -->
-                    <form action="../front_end/cadastro.php" method="POST" class="login-form">
+                    <!-- envio para o MESMO arquivo -->
+                    <form method="POST" class="login-form">
 
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
@@ -69,10 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    // 🔥 BLOQUEAR ANO MENOR QUE 1900
-    $minDate = new DateTime('1900-01-01');
-    if ($dataObj < $minDate) {
-        echo "<script>alert('A data deve ser maior ou igual a 01/01/1900.'); history.back();</script>";
+    // BLOQUEAR ANO MENOR QUE 1900
+    if ($dataObj < new DateTime('1900-01-01')) {
+        echo "<script>alert('A data deve ser maior que 01/01/1900!'); history.back();</script>";
         exit();
     }
 
@@ -85,37 +86,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if ($idade < 13) {
-        echo "<script>alert('É necessário ter ao menos 13 anos para se cadastrar.'); history.back();</script>";
+        echo "<script>alert('É necessário ter pelo menos 13 anos para se cadastrar.'); history.back();</script>";
         exit();
     }
 
-    // VERIFICA NOME EXISTENTE
+    // VERIFICA NOME
     $check = $conn->prepare("SELECT IdUsuario FROM Usuarios WHERE Nome = ?");
     $check->bind_param("s", $nome);
     $check->execute();
-    $result = $check->get_result();
-    if ($result->num_rows > 0) {
+    if ($check->get_result()->num_rows > 0) {
         echo "<script>alert('Este nome já está em uso!'); history.back();</script>";
         exit();
     }
     $check->close();
 
-    // VERIFICA EMAIL EXISTENTE
+    // VERIFICA EMAIL
     $check = $conn->prepare("SELECT IdUsuario FROM Usuarios WHERE Email = ?");
     $check->bind_param("s", $email);
     $check->execute();
-    $result = $check->get_result();
-    if ($result->num_rows > 0) {
+    if ($check->get_result()->num_rows > 0) {
         echo "<script>alert('Este email já está cadastrado!'); history.back();</script>";
         exit();
     }
     $check->close();
 
-    // --- CADASTRAR ---
+    // INSERIR NO BANCO
     $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO Usuarios (Nome, Email, Senha, DataNasc) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare("INSERT INTO Usuarios (Nome, Email, Senha, DataNasc) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $nome, $email, $senhaHash, $dataNasc);
 
     if ($stmt->execute()) {
