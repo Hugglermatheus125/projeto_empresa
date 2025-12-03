@@ -8,22 +8,9 @@ CREATE TABLE Usuarios (
     Nome VARCHAR(40) NOT NULL,
     Email VARCHAR(60) NOT NULL UNIQUE,
     Senha VARCHAR(255) NOT NULL,
-    Telefone VARCHAR(20) NOT NULL,
     DataNasc DATE NOT NULL,
     StatusFuncionario BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (IdUsuario)
-);
-
--- FUNCIONARIOS --
-CREATE TABLE Funcionarios (
-    IdFuncionario INT NOT NULL,
-    Cargo VARCHAR(30) NOT NULL,
-    CEP VARCHAR(10),
-    Telefone VARCHAR(24),
-    Salario DECIMAL(18,2) DEFAULT 0.00,
-
-    PRIMARY KEY (IdFuncionario),
-    FOREIGN KEY (IdFuncionario) REFERENCES Usuarios(IdUsuario)
 );
 
 -- POSTAGENS --
@@ -44,7 +31,7 @@ CREATE TABLE Postagens (
 -- NOTICIAS --
 CREATE TABLE Noticias (
     IdNoticia INT NOT NULL AUTO_INCREMENT,
-    IdFuncionario INT NOT NULL,
+    IdUsuario INT NOT NULL,
 
     Titulo VARCHAR(120) NOT NULL,
     Resumo VARCHAR(300),
@@ -56,5 +43,5 @@ CREATE TABLE Noticias (
     Visivel BOOLEAN DEFAULT TRUE,
 
     PRIMARY KEY (IdNoticia),
-    FOREIGN KEY (IdFuncionario) REFERENCES Funcionarios(IdFuncionario)
+    FOREIGN KEY (IdUsuario) REFERENCES Usuarios(IdUsuario)
 );

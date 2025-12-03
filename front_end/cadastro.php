@@ -12,71 +12,31 @@ include '../includes/header.php';
                     <h2 class="login-titulo">Cadastro</h2>
                     <h3 class="login-subtitulo"><i>Preencha seus dados abaixo:</i></h3>
 
-                    <form action="cadastro.php" method="POST" class="login-form">
+                    <!-- FORM CADASTRO -->
+                    <form action="../front_end/cadastro.php" method="POST" class="login-form">
 
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
-                            <input
-                                type="text"
-                                name="nome"
-                                id="nome"
-                                class="form-control"
-                                required>
+                            <input type="text" name="nome" id="nome" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                class="form-control"
-                                required>
+                            <input type="email" name="email" id="email" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Senha</label>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                class="form-control"
-                                required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="telefone" class="form-label">Telefone</label>
-                            <input
-                                type="tel"
-                                name="telefone"
-                                id="telefone"
-                                class="form-control"
-                                placeholder="(00) 00000-0000"
-                                required>
+                            <input type="password" name="password" id="password" class="form-control" required>
                         </div>
 
                         <div class="mb-4">
                             <label for="data_nasc" class="form-label">Data de Nascimento</label>
-                            <input
-                                type="date"
-                                name="data_nasc"
-                                id="data_nasc"
-                                class="form-control"
-                                required>
+                            <input type="date" name="data_nasc" id="data_nasc" class="form-control" required>
                         </div>
 
-                        <button type="submit" class="btn botao-login w-100">
-                            Cadastrar
-                        </button>
-
+                        <button type="submit" class="btn botao-login w-100">Cadastrar</button>
                     </form>
-
-                    <?php
-                    // Mostrar erro abaixo do formulário — igual no JS
-                    if (!empty($erro)) {
-                        echo "<div class='caixa-erro'><p>$erro</p></div>";
-                    }
-                    ?>
 
                 </section>
 
@@ -85,67 +45,93 @@ include '../includes/header.php';
     </div>
 </main>
 
+
 <?php
-$erro = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $nome = trim($_POST["nome"]);
-    $email = trim($_POST["email"]);
-    $senha = trim($_POST["password"]);
-    $telefone = trim($_POST["telefone"]);
+    $nome     = trim($_POST["nome"]);
+    $email    = trim($_POST["email"]);
+    $senha    = trim($_POST["password"]);
     $dataNasc = trim($_POST["data_nasc"]);
 
-    //ve se tem campo vazio
-    if (empty($nome) || empty($email) || empty($senha) || empty($telefone) || empty($dataNasc)) {
-        $erro = "Por favor, preencha todos os campos obrigatórios.";
+    // CAMPOS VAZIOS
+    if (!$nome || !$email || !$senha || !$dataNasc) {
+        echo "<script>alert('Preencha todos os campos!'); history.back();</script>";
+        exit();
     }
 
-    //ve se o telefone e em formato valido com essa coisa ai
-    if (!$erro) {
-        $telRegex = "/^\(\d{2}\) \d{5}-\d{4}$/";
-        if (!preg_match($telRegex, $telefone)) {
-            $erro = "O telefone deve estar no formato (00) 00000-0000.";
-        }
+    // VALIDAR DATA REAL + BLOQUEAR FUTURO + <13 ANOS
+    $dataObj = DateTime::createFromFormat('Y-m-d', $dataNasc);
+
+    if (!$dataObj || $dataObj->format('Y-m-d') !== $dataNasc) {
+        echo "<script>alert('Data inválida!'); history.back();</script>";
+        exit();
     }
 
-    //ve se o nome de usuario ja existe no banco
-    // 's' representa string
-    if (!$erro) {
-        $check = $conn->prepare("SELECT ID FROM Usuarios WHERE Nome = ?");
-        $check->bind_param("s", $nome);
-        $check->execute();
-        $result = $check->get_result();
-
-        if ($result->num_rows > 0) {
-            $erro = "Este nome já está em uso. Escolha outro.";
-        }
-
-        $check->close();
+    // 🔥 BLOQUEAR ANO MENOR QUE 1900
+    $minDate = new DateTime('1900-01-01');
+    if ($dataObj < $minDate) {
+        echo "<script>alert('A data deve ser maior ou igual a 01/01/1900.'); history.back();</script>";
+        exit();
     }
 
-    //see não houver erro ele inserir no banco
-    if (!$erro) {
+    $hoje = new DateTime();
+    $idade = $hoje->diff($dataObj)->y;
 
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO Usuarios (Nome, Email, Senha, Telefone, DataNasc)
-                VALUES (?, ?, ?, ?, ?)";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssss", $nome, $email, $senhaHash, $telefone, $dataNasc);
-
-        if ($stmt->execute()) {
-            echo "<h3>Cadastro realizado com sucesso!</h3>";
-        } else {
-            $erro = "Erro ao cadastrar: " . $stmt->error;
-        }
-
-        $stmt->close();
-        $conn->close();
+    if ($dataObj > $hoje) {
+        echo "<script>alert('Data no futuro não é válida!'); history.back();</script>";
+        exit();
     }
+
+    if ($idade < 13) {
+        echo "<script>alert('É necessário ter ao menos 13 anos para se cadastrar.'); history.back();</script>";
+        exit();
+    }
+
+    // VERIFICA NOME EXISTENTE
+    $check = $conn->prepare("SELECT IdUsuario FROM Usuarios WHERE Nome = ?");
+    $check->bind_param("s", $nome);
+    $check->execute();
+    $result = $check->get_result();
+    if ($result->num_rows > 0) {
+        echo "<script>alert('Este nome já está em uso!'); history.back();</script>";
+        exit();
+    }
+    $check->close();
+
+    // VERIFICA EMAIL EXISTENTE
+    $check = $conn->prepare("SELECT IdUsuario FROM Usuarios WHERE Email = ?");
+    $check->bind_param("s", $email);
+    $check->execute();
+    $result = $check->get_result();
+    if ($result->num_rows > 0) {
+        echo "<script>alert('Este email já está cadastrado!'); history.back();</script>";
+        exit();
+    }
+    $check->close();
+
+    // --- CADASTRAR ---
+    $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO Usuarios (Nome, Email, Senha, DataNasc) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $nome, $email, $senhaHash, $dataNasc);
+
+    if ($stmt->execute()) {
+        echo "<script>
+                alert('Cadastro realizado com sucesso!');
+                window.location.href='../front_end/login.php';
+              </script>";
+        exit();
+    } else {
+        echo "<script>alert('Erro ao cadastrar!'); history.back();</script>";
+        exit();
+    }
+
+    $stmt->close();
+    $conn->close();
 }
 
 include '../includes/footer.php';
-
 ?>

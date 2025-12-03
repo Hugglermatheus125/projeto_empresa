@@ -1,6 +1,7 @@
 <?php
 include '../back_end/connection.php';
 include '../includes/header.php';
+include '../includes/navbar.php';
 ?>
 
 <!DOCTYPE html>

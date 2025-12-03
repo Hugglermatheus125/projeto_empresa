@@ -147,6 +147,14 @@ p {
     text-align: justify;
 }
 
+.p2 {
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
 .contato {
     margin-top: 40px;
     font-size: 16px;
